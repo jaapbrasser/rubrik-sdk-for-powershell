@@ -2,19 +2,20 @@ trigger:
   branches:
     include:
     - devel
+    - jaap-pipeline
 pr: none
 
 jobs:
 - job: Verify_Skip_CI_Not_Present
-  displayname: 'Verify is [skip ci] is not specified'
+  displayName: 'Verify is [skip ci] is not specified'
   pool:
     vmImage: 'ubuntu-latest'
   steps:
   - checkout: self
     persistCredentials: true
   - task: ShellScript@2
-  inputs:
-    scriptPath: ./azure-pipelines/scripts/git-check-skipci.sh
+    inputs:
+      scriptPath: ./azure-pipelines/scripts/git-check-skipci.sh
     
 - job: Build_Using_Windows_PowerShell_on_Server_2019
   displayName: 'Build Using Windows PowerShell on Server 2019'
@@ -44,12 +45,12 @@ jobs:
   - task: PublishPipelineArtifact@0
     displayName: 'Publish Repository as artifact'
     inputs:
-      artifactName: 'PipelinesScripts'
+      artifactName: 'Devel_Deployment_Merge'
       targetPath: .
-    condition: failed()
+    condition: always()
     
 - job: Commit_Changes_From_DevOps_To_GitHub
-  displayname: 'Commit Changes From DevOps To GitHub'
+  displayName: 'Commit Changes From DevOps To GitHub'
   dependsOn: Build_Using_Windows_PowerShell_on_Server_2019
   pool:
     vmImage: 'ubuntu-latest'
@@ -57,6 +58,6 @@ jobs:
   - checkout: self
     persistCredentials: true
   - task: ShellScript@2
-  inputs:
-    scriptPath: ./azure-pipelines/scripts/git-devel-merge.sh
+    inputs:
+      scriptPath: ./azure-pipelines/scripts/git-check-skipci.sh
     
